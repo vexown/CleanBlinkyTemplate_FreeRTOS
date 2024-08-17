@@ -1,30 +1,38 @@
-# This is a copy of <FREERTOS_KERNEL_PATH>/portable/ThirdParty/GCC/RP2040/FREERTOS_KERNEL_import.cmake
-# (I modified it a little to get rid of code not necessary for my project)
+# ------------------------------------------------------------------------------
+# This CMake script helps locate and include the FreeRTOS kernel for the RP2040 
+# in an external project. It checks if the FREERTOS_KERNEL_PATH environment variable 
+# is set or provided as a CMake argument, verifies the kernel's existence, and 
+# then includes the necessary FreeRTOS port directory.
+#
+# Original source: <FREERTOS_KERNEL_PATH>/portable/ThirdParty/GCC/RP2040/FREERTOS_KERNEL_import.cmake
+# Git repository: <https://github.com/FreeRTOS/FreeRTOS-Kernel>
+# ------------------------------------------------------------------------------
 
-# This can be dropped into an external project to help locate the FreeRTOS kernel
-# It should be include()ed prior to project(). Alternatively this file may
-# or the CMakeLists.txt in this directory may be included or added via add_subdirectory respectively.
+if (NOT DEFINED ENV{FREERTOS_KERNEL_PATH})
+    message(FATAL_ERROR "Environment variable FREERTOS_KERNEL_PATH is not defined - please define it with a path to the FreeRTOS kernel directory")
+endif ()
 
-# Set the FREERTOS_KERNEL_PATH variable if it's not yet set (or in Cache) and if it exists as a env variable:
-if (DEFINED ENV{FREERTOS_KERNEL_PATH} AND (NOT FREERTOS_KERNEL_PATH))
+# Set the FREERTOS_KERNEL_PATH variable if it's not already set, using the environment variable if available
+if (NOT DEFINED FREERTOS_KERNEL_PATH)
     set(FREERTOS_KERNEL_PATH $ENV{FREERTOS_KERNEL_PATH})
-    message("Using FREERTOS_KERNEL_PATH from environment ('${FREERTOS_KERNEL_PATH}')")
+    message(STATUS "Using FREERTOS_KERNEL_PATH from environment ('${FREERTOS_KERNEL_PATH}')")
 endif ()
 
-# if the FREERTOS_KERNEL_PATH environment variable is not set, the user could set it manually adding a path variable when running 
-# the cmake configuration command (the usual is "cmake .." but in this case it would be cmake "-DFREERTOS_KERNEL_PATH=/path/to/kernel .. ")
-# This is then cached here. CACHE option causes the variable to be stored in the CMake cache. 
-# The CMake cache is a file that stores the values of CMake variables so that they can be reused between runs of CMake.
-set(FREERTOS_KERNEL_PATH "${FREERTOS_KERNEL_PATH}" CACHE PATH "Path to the FREERTOS Kernel" FORCE)
+# Cache the FREERTOS_KERNEL_PATH variable to allow reuse between CMake runs
+set(FREERTOS_KERNEL_PATH "${FREERTOS_KERNEL_PATH}" CACHE PATH "Path to the FreeRTOS Kernel" FORCE)
 
-get_filename_component(FREERTOS_KERNEL_PATH "${FREERTOS_KERNEL_PATH}" REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
+# Convert FREERTOS_KERNEL_PATH to an absolute path
+get_filename_component(FREERTOS_KERNEL_PATH "${FREERTOS_KERNEL_PATH}" REALPATH)
 
-if (NOT EXISTS ${FREERTOS_KERNEL_PATH})
-    message(FATAL_ERROR "Directory '${FREERTOS_KERNEL_PATH}' not found. Please provide FREERTOS_KERNEL_PATH as a -DFREERTOS_KERNEL_PATH argument or define it as an env variable ") 
+# Define the path to the FreeRTOS port directory for RP2040
+set(FREERTOS_KERNEL_RP2040_PATH "${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040")
+
+# Stop if the FreeRTOS port directory does not exist
+if (NOT EXISTS "${FREERTOS_KERNEL_RP2040_PATH}")
+    message(FATAL_ERROR "Directory '${FREERTOS_KERNEL_RP2040_PATH}' not found. Make sure the FREERTOS_KERNEL_PATH points to the FreeRTOS kernel directory")
 endif ()
 
-set(FREERTOS_KERNEL_RP2040_RELATIVE_PATH "portable/ThirdParty/GCC/RP2040")
-
-message("########## FREERTOS RP2040 CMakeLists.txt - start ##########")
-add_subdirectory(${FREERTOS_KERNEL_PATH}/${FREERTOS_KERNEL_RP2040_RELATIVE_PATH} FREERTOS_KERNEL)
-
+# Include the FreeRTOS port directory for RP2040
+message(STATUS "########## FreeRTOS RP2040 CMakeLists.txt - start ##########")
+add_subdirectory(${FREERTOS_KERNEL_RP2040_PATH} FREERTOS_KERNEL)
+message(STATUS "########## FreeRTOS RP2040 CMakeLists.txt - end ##########")
