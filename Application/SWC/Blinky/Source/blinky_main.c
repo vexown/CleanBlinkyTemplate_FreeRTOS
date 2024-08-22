@@ -25,13 +25,6 @@
  * 1 tab == 4 spaces!
  *******************************************************************************/
 
-/********************************* HARDWARE ************************************/
-/* MPU6050 - world’s first integrated 6-axis MotionTracking device that combines
- * a 3-axis gyroscope, 3-axis accelerometer, and a Digital Motion Processor™ (DMP) 
- * Datasheet: https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf
- * 
- *******************************************************************************/
-
 /* Standard includes. */
 #include <stdio.h>
 
@@ -54,9 +47,6 @@
 
 /* The number of items the queue can hold */
 #define mainQUEUE_LENGTH					( 1 )
-
-/* By default the MPU6050 devices are on bus address 0x68 */ 
-#define MPU6050_I2C_ADDRESS   				 0x68
 
 /*-----------------------------------------------------------*/
 
