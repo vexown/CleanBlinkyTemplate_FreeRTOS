@@ -22,11 +22,7 @@ target_include_directories(blinky_main PRIVATE
         )
 
 # Link libraries and dependencies
-target_link_libraries(blinky_main 
-                      pico_stdlib  
-                      pico_cyw43_arch_none
-                      FreeRTOS-Kernel 
-                      FreeRTOS-Kernel-Heap1)
+target_link_libraries(blinky_main pico_stdlib FreeRTOS-Kernel FreeRTOS-Kernel-Heap1)
 
 # Add extra outputs specific to the Pico SDK
 pico_add_extra_outputs(blinky_main)
