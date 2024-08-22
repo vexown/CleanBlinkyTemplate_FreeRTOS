@@ -37,6 +37,7 @@
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 #include "hardware/gpio.h"
+#include "pico/cyw43_arch.h"
 
 /* Priorities for the tasks */
 #define mainQUEUE_RECEIVE_TASK_PRIORITY		( tskIDLE_PRIORITY + 2 )
@@ -127,8 +128,10 @@ static void prvQueueSendTask( void *pvParameters )
 
 static void prvQueueReceiveTask( void *pvParameters )
 {
-unsigned long ulReceivedValue;
-const unsigned long ulExpectedValue = 100UL;
+	unsigned long ulReceivedValue;
+	const unsigned long ulExpectedValue = 100UL;
+
+	static int state_LED;
 
 	/* Remove compiler warning about unused parameter. */
 	( void ) pvParameters;
@@ -145,7 +148,8 @@ const unsigned long ulExpectedValue = 100UL;
 		if( ulReceivedValue == ulExpectedValue )
 		{
 			/* Change the LED State */
-			gpio_xor_mask( 1u << PICO_DEFAULT_LED_PIN );
+			state_LED = !state_LED;
+			cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, state_LED);
 
 			/* Clear the variable so the next time this task runs a correct value needs to be supplied again */
 			ulReceivedValue = 0U;

@@ -25,7 +25,7 @@ cmake_minimum_required(VERSION 3.13)
 message("########## TOP CMakeLists.txt - start ##########")
 
 # Specify parameters for pico-sdk
-set(PICO_BOARD pico)
+set(PICO_BOARD pico_w)
 set(PICO_PLATFORM rp2040)
 set(PICO_COMPILER pico_arm_cortex_m0plus_gcc)
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)

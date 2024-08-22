@@ -40,6 +40,7 @@
 /* Library includes. */
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "pico/cyw43_arch.h"
 
 /*-----------------------------------------------------------*/
 
@@ -71,9 +72,7 @@ int main( void )
 static void prvSetupHardware( void )
 {
     stdio_init_all();
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, 1);
-    gpio_put(PICO_DEFAULT_LED_PIN, !PICO_DEFAULT_LED_PIN_INVERTED);
+    cyw43_arch_init();
 }
 /*-----------------------------------------------------------*/
 
