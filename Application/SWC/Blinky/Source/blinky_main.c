@@ -25,13 +25,6 @@
  * 1 tab == 4 spaces!
  *******************************************************************************/
 
-/********************************* HARDWARE ************************************/
-/* MPU6050 - world’s first integrated 6-axis MotionTracking device that combines
- * a 3-axis gyroscope, 3-axis accelerometer, and a Digital Motion Processor™ (DMP) 
- * Datasheet: https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf
- * 
- *******************************************************************************/
-
 /* Standard includes. */
 #include <stdio.h>
 
@@ -44,6 +37,7 @@
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 #include "hardware/gpio.h"
+#include "pico/cyw43_arch.h"
 
 /* Priorities for the tasks */
 #define mainQUEUE_RECEIVE_TASK_PRIORITY		( tskIDLE_PRIORITY + 2 )
@@ -54,9 +48,6 @@
 
 /* The number of items the queue can hold */
 #define mainQUEUE_LENGTH					( 1 )
-
-/* By default the MPU6050 devices are on bus address 0x68 */ 
-#define MPU6050_I2C_ADDRESS   				 0x68
 
 /*-----------------------------------------------------------*/
 
@@ -137,8 +128,10 @@ static void prvQueueSendTask( void *pvParameters )
 
 static void prvQueueReceiveTask( void *pvParameters )
 {
-unsigned long ulReceivedValue;
-const unsigned long ulExpectedValue = 100UL;
+	unsigned long ulReceivedValue;
+	const unsigned long ulExpectedValue = 100UL;
+
+	static int state_LED;
 
 	/* Remove compiler warning about unused parameter. */
 	( void ) pvParameters;
@@ -155,7 +148,8 @@ const unsigned long ulExpectedValue = 100UL;
 		if( ulReceivedValue == ulExpectedValue )
 		{
 			/* Change the LED State */
-			gpio_xor_mask( 1u << PICO_DEFAULT_LED_PIN );
+			state_LED = !state_LED;
+			cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, state_LED);
 
 			/* Clear the variable so the next time this task runs a correct value needs to be supplied again */
 			ulReceivedValue = 0U;
