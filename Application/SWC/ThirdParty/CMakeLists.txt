@@ -3,7 +3,7 @@ message("########## ThirdParty/CMakeLists.txt - start ##########")
 
 # Define the path to the source files for ThirdParty
 set(THIRDPARTY_SOURCE_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/IntQueueTimer.c
+    #${CMAKE_CURRENT_SOURCE_DIR}/Source/source_file.c
     )
 
 # Define the path to the include directory for ThirdParty
